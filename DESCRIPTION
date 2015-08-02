@@ -13,7 +13,7 @@ Maintainer: Greg Rahn <greg@snowflake.net>
 URL: https://github.com/snowflakedb/dplyr-snowflakedb
 BugReports: https://github.com/snowflakedb/dplyr-snowflakedb/issues
 Depends:
-    R (>= 3.1.2)
+    R (>= 3.2.1)
 Imports:
     assertthat,
     utils,
@@ -27,3 +27,4 @@ Suggests:
     methods,
     testthat
 License: MIT + file LICENSE
+LazyData: true
