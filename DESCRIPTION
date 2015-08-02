@@ -1,0 +1,29 @@
+Package: dplyr.snowflakedb
+Title: SnowflakeDB backend for dplyr
+Description: Adds SnowflakeDB SQL backend support for dplyr.
+Version: 0.1.0
+Date: 2015-08-01
+Authors@R: c(
+    person("Greg", "Rahn", email = "greg@snowflake.net",
+           role = c("aut", "cre")),
+    person("Snowflake Computing", role = "cph")
+    )
+Author: Greg Rahn <greg@snowflake.net>
+Maintainer: Greg Rahn <greg@snowflake.net>
+URL: https://github.com/snowflakedb/dplyr-snowflakedb
+BugReports: https://github.com/snowflakedb/dplyr-snowflakedb/issues
+Depends:
+    R (>= 3.1.2)
+Imports:
+    assertthat,
+    utils,
+    magrittr,
+    lazyeval (>= 0.1.10),
+    RJDBC,
+    dplyr
+Suggests:
+    Lahman (>= 3.0-1),
+    nycflights13,
+    methods,
+    testthat
+License: MIT + file LICENSE
