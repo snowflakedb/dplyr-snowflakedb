@@ -1,3 +1,7 @@
+# Based on code from dplyr
+# Used under the terms of the MIT Software License
+# available at https://github.com/hadley/dplyr/blob/master/LICENSE
+
 library(testthat)
 library(RJDBC)
 library(dplyr)
