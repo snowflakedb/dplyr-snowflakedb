@@ -17,7 +17,7 @@ test <- src_snowflakedb(account = Sys.getenv("SNOWFLAKE_ACCOUNT"),
                         opts = list(warehouse = Sys.getenv("SNOWFLAKE_WAREHOUSE"),
                                     db = Sys.getenv("SNOWFLAKE_DB"),
                                     schema = "public",
-                                    trace = "OFF"))
+                                    tracing = "off"))
 
 expect_same_in_sql <- function(expr) {
   expr <- substitute(expr)

@@ -17,7 +17,7 @@ src <- src_snowflakedb(account = Sys.getenv("SNOWFLAKE_ACCOUNT"),
                        opts = list(warehouse = Sys.getenv("SNOWFLAKE_WAREHOUSE"),
                                    db = Sys.getenv("SNOWFLAKE_DB"),
                                    schema = "public",
-                                   tracing = "OFF"))
+                                   tracing = "off"))
 
 df1 <- copy_to(src, data.frame(x = 1:5, y = 1:5), "df1")
 df2 <- copy_to(src, data.frame(a = 5:1, b = 1:5), "df2")
