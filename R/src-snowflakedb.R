@@ -125,7 +125,7 @@ src_snowflakedb <- function(user = NULL,
     opts <- ""
   }
 
-  if (is.null(host)) {
+  if (is.null(host) || host == "") {
     host = paste0(account, ".snowflakecomputing.com")
   }
   url <- paste0("jdbc:snowflake://", host, ":", as.character(port),
