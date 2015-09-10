@@ -26,7 +26,7 @@ The `dplyr.snowflakedb` connectivity to SnowflakeDB uses the `RJDBC` package, ho
 * running `R CMD javareconf` so R uses the Java 8 for its `JAVA_HOME`
 * installing `rJava` from source so it can be linked against Java 8
 
-If you are using R on Mac OS X, please see [this page]() for the necessary installation steps for `rJava`.
+If you are using R on Mac OS X, please see [this wiki page](https://github.com/snowflakedb/dplyr-snowflakedb/wiki/Configuring-R-rJava-RJDBC-on-Mac-OS-X) for the necessary installation steps for `rJava`.
 
 Once you have `rJava` installed and verified it is using Java 8, you can install `dplyr` and dependancies.
 
@@ -72,4 +72,4 @@ If you find an issue and would like to fix it yourself, please do, and submit a 
 
 ## Copyright and License
 
-Copyright 2015 Snowflake Computing, Inc. Licensed under [the Apache License, Version 2.0](https://github.com/snowflakedb/dplyr-snowflakedb/blob/master/LICENSE). 
+Copyright 2015 Snowflake Computing, Inc. Licensed under [the Apache License, Version 2.0](https://github.com/snowflakedb/dplyr-snowflakedb/blob/master/LICENSE).
