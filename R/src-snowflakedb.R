@@ -1,3 +1,18 @@
+# Copyright 2015 Snowflake Computing Inc.
+# Copyright 2013-2015 RStudio
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 #' @import RJDBC
 #' @import dplyr
 NULL
@@ -124,7 +139,7 @@ src_snowflakedb <- function(user = NULL,
   else {
     opts <- ""
   }
-
+  message("host: ", host)
   if (is.null(host) || host == "") {
     host = paste0(account, ".snowflakecomputing.com")
   }
@@ -230,18 +245,6 @@ db_query_fields.SnowflakeDBConnection <- function(con, query, ...) {
   names(dbGetQuery(con, s))
 }
 
-# db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
-#   # copied from PostgreSQLConnection
-#   cols <- lapply(values, escape, collapse = NULL, parens = FALSE, con = con)
-#   col_mat <- matrix(unlist(cols, use.names = FALSE), nrow = nrow(values))
-
-#   rows <- apply(col_mat, 1, paste0, collapse = ", ")
-#   values <- paste0("(", rows, ")", collapse = "\n, ")
-
-#   sql <- build_sql("INSERT INTO ", ident(table), " VALUES ", sql(values))
-#   dbGetQuery(con, sql)
-# }
-
 #' @export
 db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
   table
@@ -295,24 +298,3 @@ db_data_type.SnowflakeDBConnection <- function(con, fields) {
 db_explain.SnowflakeDBConnection <- function(con, sql, ...) {
   message("explain() not supported for SnowflakeDB")
 }
-#
-# # temporary menthods for right/full join
-# # https://github.com/NikNakk/dplyr/commit/7042e824ed8b6e2f33a9af7a48998d6cbd46d101
-#
-# #' @export
-# right_join.tbl_snowflakedb <- function(x, y, by = NULL, copy = FALSE,
-#                               auto_index = FALSE, ...) {
-#   by <- dplyr::common_by(by, x, y)
-#   y <- dplyr::auto_copy(x, y, copy, indexes = if (auto_index) list(by$y))
-#   sql <- dplyr::sql_join(x$src$con, x, y, type = "right", by = by)
-#   dplyr::update(tbl(x$src, sql), group_by = groups(x))
-# }
-#
-# #' @export
-# full_join.tbl_snowflakedb <- function(x, y, by = NULL, copy = FALSE,
-#                               auto_index = FALSE, ...) {
-#   by <- dplyr::common_by(by, x, y)
-#   y <- dplyr::auto_copy(x, y, copy, indexes = if (auto_index) list(by$y))
-#   sql <- dplyr::sql_join(x$src$con, x, y, type = "left", by = by)
-#   dplyr::update(tbl(x$src, sql), group_by = groups(x))
-# }

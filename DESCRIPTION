@@ -26,5 +26,5 @@ Suggests:
     nycflights13,
     methods,
     testthat
-License: MIT + file LICENSE
+License: Apache License(== 2.0)
 LazyData: true
