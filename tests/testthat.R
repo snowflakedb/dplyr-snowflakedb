@@ -12,11 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-library(testthat)
-library(assertthat)
-library(RJDBC)
-library(dplyr)
-library(dplyr.snowflakedb)
+library("testthat")
+library("assertthat")
+library("rJava")
+library("DBI")
+library("RJDBC")
+library("dplyr")
+library("dplyr.snowflakedb")
 options(dplyr.jdbc.classpath = Sys.getenv("SNOWFLAKE_JAR"))
 
 test_check("dplyr.snowflakedb")
