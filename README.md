@@ -72,4 +72,4 @@ If you find an issue and would like to fix it yourself, please do, and submit a 
 
 ## Copyright and License
 
-Copyright 2015 Snowflake Computing, Inc. Licensed under [the Apache License, Version 2.0](https://github.com/snowflakedb/dplyr-snowflakedb/blob/master/LICENSE).
+Copyright 2015 Snowflake Computing, Inc. Licensed under the [Apache License, Version 2.0](https://github.com/snowflakedb/dplyr-snowflakedb/blob/master/LICENSE).
