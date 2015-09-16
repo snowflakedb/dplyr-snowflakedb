@@ -52,14 +52,14 @@ devtools::install_github("snowflakedb/dplyr-snowflakedb")
 ```
 library(dplyr)
 library(dplyr.snowflakedb)
-options(dplyr.jdbc.classpath = "/home/snowman/Downloads/snowflake_jdbc.jar"))
+options(dplyr.jdbc.classpath = "/home/snowman/Downloads/snowflake_jdbc.jar")
 
 my_db <- src_snowflakedb(user = "snowman",
                          password = "letitsnow",
                          account = "acme",
                          opts = list(warehouse = "mywh",
                                      db = "mydb",
-                                     schema = "public")
+                                     schema = "public"))
 ```
 
 ##  Issues
