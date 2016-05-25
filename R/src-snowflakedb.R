@@ -262,7 +262,7 @@ db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
   write.table(values, tmp, sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE, na = "")
 
   # put the tsv file to the Snowflake table stage
-  sql <- sprintf("PUT file://%s @%%\"%s\"", tmp, table)
+  sql <- sprintf("PUT 'file://%s' @%%\"%s\"", tmp, table)
   message(sql)
   rs <- dbGetQuery(con, sql)
   if (rs["status"] != "UPLOADED") print(rs)
