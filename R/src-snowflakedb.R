@@ -271,8 +271,7 @@ db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
 db_data_type.SnowflakeDBConnection <- function(con, fields) {
   data_type <- function(x) {
     switch(class(x)[1],
-      # logical = "BOOLEAN",
-      logical = "VARCHAR(1)",
+      logical = "BOOLEAN",
       integer = "NUMBER(10)",
       numeric = "DOUBLE",
       factor =  "VARCHAR",
