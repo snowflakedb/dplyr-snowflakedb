@@ -249,17 +249,9 @@ db_query_fields.SnowflakeDBConnection <- function(con, query, ...) {
 db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
   table
 
-  # Convert factors to strings
-  is_factor <- vapply(values, is.factor, logical(1))
-  values[is_factor] <- lapply(values[is_factor], as.character)
-
-  # Encode special characters in strings
-  is_char <- vapply(values, is.character, logical(1))
-  values[is_char] <- lapply(values[is_char], encodeString)
-
   # write the table out to a local tsv file
   tmp <- tempfile(fileext = ".tsv")
-  write.table(values, tmp, sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE, na = "")
+  write.table(values, tmp, sep = "\t", quote = FALSE, row.names = FALSE, col.names = TRUE)
 
   # put the tsv file to the Snowflake table stage
   sql <- sprintf("PUT 'file://%s' @%%\"%s\"", tmp, table)
@@ -268,7 +260,7 @@ db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
   if (rs["status"] != "UPLOADED") print(rs)
 
   # load the file from the table stage
-  sql <- dplyr::build_sql("COPY INTO ", ident(table), " FILE_FORMAT = (FIELD_DELIMITER = '\\t' SKIP_HEADER = 1)")
+  sql <- dplyr::build_sql("COPY INTO ", ident(table), " FILE_FORMAT = (FIELD_DELIMITER = '\\t' SKIP_HEADER = 1 NULL_IF = 'NA')")
   message(sql)
   rs <- dbGetQuery(con, sql)
   if (rs["errors_seen"] != "0") print(rs)
