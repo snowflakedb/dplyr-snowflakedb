@@ -30,26 +30,26 @@ If you are using R on Mac OS X, please see [this wiki page](https://github.com/s
 
 Once you have `rJava` installed and verified it is using Java 8, you can install `dplyr` and dependancies.
 
-```
+```R
 install.packages(c("RJDBC", "DBI", "dplyr"))
 ```
 
 If you'd like some data to experiment with I'd recommend installing the following packages that most of the `dplyr` examples and vignettes use.
 
-```
+```R
 install.packages(c("nycflights13", "Lahman"))
 ```
 
 ## Installing dplyr.snowflakedb
 
-```
+```R
 install.packages("devtools")
 devtools::install_github("snowflakedb/dplyr-snowflakedb")
 ```
 
 ## Example SnowflakeDB Connection
 
-```
+```R
 library(dplyr)
 library(dplyr.snowflakedb)
 options(dplyr.jdbc.classpath = "/home/snowman/Downloads/snowflake_jdbc.jar")
