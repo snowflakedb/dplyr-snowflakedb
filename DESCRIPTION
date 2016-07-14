@@ -1,8 +1,8 @@
 Package: dplyr.snowflakedb
 Title: SnowflakeDB backend for dplyr
 Description: Adds SnowflakeDB SQL backend support for dplyr.
-Version: 0.1.1
-Date: 2015-08-01
+Version: 0.2.0
+Date: 2016-07-14
 Authors@R: c(
     person("Greg", "Rahn", email = "greg@snowflake.net",
            role = c("aut", "cre")),
@@ -20,7 +20,7 @@ Imports:
     magrittr,
     lazyeval (>= 0.1.10),
     RJDBC,
-    dplyr
+    dplyr (>= 0.5.0)
 Suggests:
     Lahman (>= 3.0-1),
     nycflights13,
@@ -28,3 +28,4 @@ Suggests:
     testthat
 License: Apache License(== 2.0)
 LazyData: true
+RoxygenNote: 5.0.1
