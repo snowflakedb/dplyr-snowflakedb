@@ -130,6 +130,19 @@ src_snowflakedb <- function(user = NULL,
   requireNamespace("RJDBC", quietly = TRUE)
   requireNamespace("dplyr", quietly = TRUE)
 
+  # set client metadata info
+  snowflakeClientInfo <- paste0('{',
+    '"APPLICATION": "dplyr.snowflakedb",',
+    '"dplyr.snowflakedb.version": "', packageVersion("dplyr.snowflakedb"), '",',
+    '"dplyr.version": "', packageVersion("dplyr"), '",',
+    '"R.version": "', R.Version()$version.string,'",',
+    '"R.platform": "', R.Version()$platform,'"',
+  '}')
+
+  # initalize the JVM and set the snowflake properties
+  .jinit()
+  .jcall("java/lang/System", "S", "setProperty", "snowflake.client.info", snowflakeClientInfo)
+
   if (length(names(opts)) > 0) {
     opts <- paste0("&",
                    paste(lapply(names(opts),
@@ -199,7 +212,7 @@ src_desc.src_snowflakedb <- function(x) {
 }
 
 #' @export
-src_translate_env.src_snowflakedb <- function(x) {
+sql_translate_env.src_snowflakedb <- function(x) {
   dplyr::sql_variant(
     dplyr::base_scalar,
     dplyr::sql_translator(.parent = dplyr::base_agg,
@@ -210,7 +223,6 @@ src_translate_env.src_snowflakedb <- function(x) {
       var = dplyr::sql_prefix("VAR_SAMP"),
       # all = dplyr::sql_prefix("bool_and"),
       # any = dplyr::sql_prefix("bool_or"),
-      n_distinct = function(x) dplyr::build_sql("COUNT(DISTINCT ", x, ")"),
       paste = function(x, collapse) dplyr::build_sql("LISTAGG(", x, collapse, ")")
     ),
     base_win
@@ -237,12 +249,10 @@ db_begin.SnowflakeDBConnection <- function(con, ...) {
 }
 
 #' @export
-db_query_fields.SnowflakeDBConnection <- function(con, query, ...) {
-  # this fails when only a table name is passed in because it is single quoted
-  # using ident() will add a second double qoting when it is not necessary
-  s <- dplyr::build_sql("SELECT * FROM ", query, " LIMIT 0", con = con)
-  if (isTRUE(getOption("dplyr.show_sql"))) message("SQL: ", s)
-  names(dbGetQuery(con, s))
+db_query_fields.SnowflakeDBConnection <- function(con, sql, ...) {
+  fields <- dplyr::build_sql("SELECT * FROM ", sql_subquery(con, sql), " LIMIT 0", con = con)
+  if (isTRUE(getOption("dplyr.show_sql"))) message("SQL: ", sql)
+  names(dbGetQuery(con, fields))
 }
 
 #' @export
