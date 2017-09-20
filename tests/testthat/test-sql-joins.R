@@ -1,5 +1,5 @@
-# Copyright 2015 Snowflake Computing Inc.
-# (derived from dplyr, Copyright 2013-2015 RStudio)
+# Copyright 2017 Snowflake Computing Inc.
+# (derived from dplyr, Copyright 2013-2017 RStudio)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

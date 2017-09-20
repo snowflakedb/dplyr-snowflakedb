@@ -8,4 +8,3 @@
 \description{
 dplyr.snowflakedb: A SnowflakeDB backend for dplyr
 }
-

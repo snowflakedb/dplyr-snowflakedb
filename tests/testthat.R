@@ -1,4 +1,4 @@
-# Copyright 2015 Snowflake Computing Inc.
+# Copyright 2017 Snowflake Computing Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

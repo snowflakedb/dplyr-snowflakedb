@@ -11,4 +11,3 @@ made easily available in R through the \pkg{Lahman} package by
 Michael Friendly, Dennis Murphy and Martin Monkman. See the documentation
 for that package for documentation of the inidividual tables.
 }
-
