@@ -195,14 +195,14 @@ src_snowflakedb <- function(user = NULL,
     environment()
   }
 
-  dplyr::src_sql("snowflakedb", con, info = info,
+  dbplyr::src_sql("snowflakedb", con, info = info,
           disco = db_disconnector(con, "snowflakedb"))
 }
 
 #' @export
 #' @rdname src_snowflakedb
 tbl.src_snowflakedb <- function(src, from, ...) {
-  dplyr::tbl_sql("snowflakedb", src = src, from = from, ...)
+  dbplyr::tbl_sql("snowflakedb", src = src, from = from, ...)
 }
 
 #' @export
@@ -212,20 +212,21 @@ src_desc.src_snowflakedb <- function(x) {
 }
 
 #' @export
-sql_translate_env.src_snowflakedb <- function(x) {
-  dplyr::sql_variant(
-    dplyr::base_scalar,
-    dplyr::sql_translator(.parent = dplyr::base_agg,
-      n = function() dplyr::sql("COUNT(*)"),
-      cor = dplyr::sql_prefix("CORR"),
-      cov = dplyr::sql_prefix("COVAR_SAMP"),
-      sd =  dplyr::sql_prefix("STDDEV_SAMP"),
-      var = dplyr::sql_prefix("VAR_SAMP"),
-      # all = dplyr::sql_prefix("bool_and"),
-      # any = dplyr::sql_prefix("bool_or"),
-      paste = function(x, collapse) dplyr::build_sql("LISTAGG(", x, collapse, ")")
+#sql_translate_env.src_snowflakedb <- function(x) {
+sql_translate_env.SnowflakeDBConnection <- function(x) { 
+ dbplyr::sql_variant(
+    dbplyr::base_scalar,
+    dbplyr::sql_translator(.parent = dbplyr::base_agg,
+      n = function() dbplyr::sql("COUNT(*)"),
+      cor = dbplyr::sql_prefix("CORR"),
+      cov = dbplyr::sql_prefix("COVAR_SAMP"),
+      sd =  dbplyr::sql_prefix("STDDEV_SAMP"),
+      var = dbplyr::sql_prefix("VAR_SAMP"),
+      # all = dbplyr::sql_prefix("bool_and"),
+      # any = dbplyr::sql_prefix("bool_or"),
+      paste = function(x, collapse) dbplyr::build_sql("LISTAGG(", x, collapse, ")")
     ),
-    base_win
+    dbplyr::base_win
   )
 }
 
@@ -250,7 +251,7 @@ db_begin.SnowflakeDBConnection <- function(con, ...) {
 
 #' @export
 db_query_fields.SnowflakeDBConnection <- function(con, sql, ...) {
-  fields <- dplyr::build_sql("SELECT * FROM ", sql_subquery(con, sql), " LIMIT 0", con = con)
+  fields <- dbplyr::build_sql("SELECT * FROM ", sql_subquery(con, sql), " LIMIT 0", con = con)
   if (isTRUE(getOption("dplyr.show_sql"))) message("SQL: ", sql)
   names(dbGetQuery(con, fields))
 }
@@ -270,7 +271,7 @@ db_insert_into.SnowflakeDBConnection <- function(con, table, values, ...) {
   if (rs["status"] != "UPLOADED") print(rs)
 
   # load the file from the table stage
-  sql <- dplyr::build_sql("COPY INTO ", ident(table), " FILE_FORMAT = (FIELD_DELIMITER = '\\t' SKIP_HEADER = 1 NULL_IF = 'NA')")
+  sql <- dbplyr::build_sql("COPY INTO ", ident(table), " FILE_FORMAT = (FIELD_DELIMITER = '\\t' SKIP_HEADER = 1 NULL_IF = 'NA')")
   message(sql)
   rs <- dbGetQuery(con, sql)
   if (rs["errors_seen"] != "0") print(rs)

@@ -20,6 +20,7 @@ Imports:
     magrittr,
     lazyeval (>= 0.1.10),
     RJDBC,
+    dbplyr,
     dplyr (>= 0.5.0)
 Suggests:
     Lahman (>= 3.0-1),
