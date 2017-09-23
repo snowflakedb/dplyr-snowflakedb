@@ -8,7 +8,7 @@
 src_snowflakedb(user = NULL, password = NULL, account = NULL,
   port = 443, host = NULL, opts = list(), ...)
 
-tbl.src_snowflakedb(src, from, ...)
+\method{tbl}{src_snowflakedb}(src, from, ...)
 }
 \arguments{
 \item{user}{Username}
@@ -92,6 +92,7 @@ regardless of where the data is stored.
    one level of grouping peeled off.
 }
 }
+
 \examples{
 \dontrun{
 # Connection basics ---------------------------------------------------------
@@ -176,4 +177,3 @@ batting2008
 #}
 }
 }
-

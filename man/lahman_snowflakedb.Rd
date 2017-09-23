@@ -12,4 +12,3 @@ lahman_snowflakedb(...)
 \description{
 Lahman function for SnowflakeDB.
 }
-
