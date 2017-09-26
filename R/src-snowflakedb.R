@@ -258,6 +258,12 @@ tbl.src_snowflakedb <- function(src, from, ...) {
 }
 
 #' @export
+tbl.SnowflakeDBConnection <- function(con, from, ...) {
+  src <- dbplyr::src_sql("snowflakedb", con)
+  dbplyr::tbl_sql("snowflakedb", src = src, from = from, ...)
+}
+
+#' @export
 src_desc.src_snowflakedb <- function(x) {
   info <- x$info
   paste0("SnowflakeDB: ", info$version, "\nURL: ", info$url, "\n")
@@ -285,16 +291,10 @@ sql_translate_env.SnowflakeDBConnection <- function(x) {
   )
 }
 
-#' @export
-sql_escape_ident.SnowflakeDBConnection <- function(con, x) {
-  paste0('"', toupper(x), '"')
-}
-
 # DBI methods ------------------------------------------------------------------
-
 #' @export
 db_has_table.SnowflakeDBConnection <- function(con, table) {
-    length(dbListTables(con, toupper(table))) > 0
+  dbExistsTable(con, table) || dbExistsTable(con, toupper(table))
 }
 
 #' @export
@@ -357,9 +357,9 @@ db_explain.SnowflakeDBConnection <- function(con, sql, ...) {
 db_snowflake_copy <- function(con, from, to, format_opts = list()) {
   if (length(names(format_opts)) > 0) {
     opts <- paste0("file_format = (",
-                   paste(lapply(names(opts),
+                   paste(lapply(names(format_opts),
                                 function(x) {
-                                  paste(x, opts[x], sep = "=")
+                                  paste(x, format_opts[x], sep = "=")
                                 }),
                          collapse = ", "), ")")
   }
@@ -374,14 +374,14 @@ db_snowflake_copy <- function(con, from, to, format_opts = list()) {
 
 #' @export
 db_put_to_stage <- function(con, file.name, stage.name) {
-  rs <- dbGetQuery(con, paste("PUT '", file.name, "'", stage.name))
+  rs <- dbGetQuery(con, paste0("PUT '", file.name, "'", stage.name))
   if (rs["status"] != "UPLOADED")
     warning(rs)
 }
 
 #' @export
 db_get_from_stage <- function(con, file.name, stage.name) {
-  dbGetQuery(con, paste("GET", stage.name, "'", file.name, "'"))
+  dbGetQuery(con, paste0("GET ", stage.name, " '", file.name, "'"))
 }
 
 #' @export
@@ -397,15 +397,17 @@ db_load_from_file <- function(con, table.name, file.name) {
   if (!db_has_table(con, table.name))
     stop("The specified table does not exist in Snowflake.")
   
+  file.name <- paste0("file://", file.name)
+  
   # Use table stage
   stage_name <-
-    paste0("@%", table.name, "/dplyr_connector_staging_area/")
+    paste0("@%", id(table.name), "/dplyr_connector_staging_area/")
   db_put_to_stage(con, file.name, stage_name)
-  
+
   db_snowflake_copy(
     con,
     stage_name,
-    table.name,
+    id(table.name),
     format_opts = list(
       type = "CSV",
       field_delimiter = "','",
@@ -419,15 +421,15 @@ atomic_copy <- function(con, from, to) {
   temp_table_name <- paste0(to, "_dplyr_snowflakedb_temp_table")
   tryCatch({
     dbSendQuery(con,
-                paste("CREATE OR REPLACE TABLE", temp_table_name, "LIKE", to))
+                paste("CREATE OR REPLACE TABLE", id(temp_table_name), "LIKE", id(to)))
     db_load_from_file(con, temp_table_name, from)
     
     if (db_has_table(con, to))
       dbSendQuery(con,
-                  paste("ALTER TABLE", to, "SWAP WITH", temp_table_name))
+                  paste("ALTER TABLE", id(to), "SWAP WITH", id(temp_table_name)))
     else
       dbSendQuery(con,
-                  paste("ALTER TABLE", temp_table_name, "RENAME TO", to))
+                  paste("ALTER TABLE", id(temp_table_name), "RENAME TO", id(to)))
   },
   # If PUT or COPY fail even partially, be sure to catch it and stop alteration of original table
   warning = function(w) {
@@ -446,8 +448,13 @@ copy_to.src_snowflakedb <-
   function(dest,
            df,
            name = deparse(substitute(df)),
+           overwrite = FALSE,
            mode = "safe",
            ...) {
+    
+    if (overwrite)
+      mode = "overwrite"
+    
     mode <- tolower(mode)
     stopifnot(is.data.frame(df),
               is.string(name),
@@ -514,6 +521,24 @@ db_insert_into.SnowflakeDBConnection <-
       ...
     )
   }
+
+id <- function(name) {
+  dbplyr::sql_quote(name, '"')
+}
+# snowflake.identifier <- function(name) {
+#   if (is.quoted(name)) 
+#     name
+#   else
+#     paste0("\"", toupper(name), "\"")
+# }
+# 
+# is.quoted <- function(string) {
+#   # In R-3.4, can be replaced with base::startsWith and base::endsWith
+#   #startsWith(string, "\"") && endsWith(string, "\"")
+#    
+#   substring(string, 1, 1) == "\"" && 
+#     substring(string, nchar(string), nchar(string)) == "\""
+# }
 
 #' @export
 setMethod("dbGetRowsAffected", signature("JDBCResult"), function(res) {
