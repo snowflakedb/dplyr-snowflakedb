@@ -23,6 +23,28 @@ NULL
 #' Use \code{src_snowflakedb} to connect to an existing Snowflake database,
 #' and \code{tbl} to connect to tables within that database.
 #'
+
+setClass(
+  "SnowflakeDBConnection",
+  representation = representation(
+    con = "JDBCConnection",
+    jc = "jobjRef",
+    identifier.quote = "character",
+    info = "list"
+  ),
+  contains = "JDBCConnection"
+)
+
+.SnowflakeDBConnection <- function(con, info) {
+  new(
+    "SnowflakeDBConnection",
+    con = con,
+    jc = con@jc,
+    identifier.quote = con@identifier.quote,
+    info = info
+  )
+}
+
 #' @template db-info
 #' @param user Username
 #' @param password Password
@@ -184,7 +206,7 @@ src_snowflakedb <- function(user = NULL,
                 account,
                 opts)
   message("URL: ", url)
-  con <-
+  conn <-
     dbConnect(
       RJDBC::JDBC(
         driverClass = "com.snowflake.client.jdbc.SnowflakeDriver",
@@ -197,7 +219,7 @@ src_snowflakedb <- function(user = NULL,
       ...
     )
   res <- dbGetQuery(
-    con,
+    conn,
     'SELECT
     CURRENT_USER() AS USER,
     CURRENT_DATABASE() AS DBNAME,
@@ -211,7 +233,7 @@ src_snowflakedb <- function(user = NULL,
     user = res$USER,
     Id = res$SESSIONID
   )
-  
+
   env <- environment()
   # temporarily suppress the warning messages from getPackageName()
   wmsg <- getOption('warn')
@@ -219,13 +241,14 @@ src_snowflakedb <- function(user = NULL,
   SnowflakeDBConnection <-
     methods::setRefClass(
       "SnowflakeDBConnection",
+      fields = c("con", "jc", "identifier.quote", "info"),
       contains = c("JDBCConnection"),
       where = env
     )
   options(warn = wmsg)
-  con <-
-    structure(con, class = c("SnowflakeDBConnection", "JDBCConnection"))
   
+  con <- structure(conn, info = info, class = c("SnowflakeDBConnection", "JDBCConnection"))
+   
   # Creates an environment that disconnects the database when it's
   # garbage collected
   db_disconnector <- function(con, name, quiet = FALSE) {
@@ -233,11 +256,7 @@ src_snowflakedb <- function(user = NULL,
       if (!quiet) {
         message(
           "Auto-disconnecting ",
-          name,
-          " connection ",
-          "(",
-          paste(con@Id, collapse = ", "),
-          ")"
+          name
         )
       }
       dbDisconnect(con)
@@ -247,7 +266,6 @@ src_snowflakedb <- function(user = NULL,
   
   dbplyr::src_sql("snowflakedb",
                   con,
-                  info = info,
                   disco = db_disconnector(con, "snowflakedb"))
 }
 
@@ -264,9 +282,9 @@ tbl.SnowflakeDBConnection <- function(con, from, ...) {
 }
 
 #' @export
-src_desc.src_snowflakedb <- function(x) {
-  info <- x$info
-  paste0("SnowflakeDB: ", info$version, "\nURL: ", info$url, "\n")
+db_desc.SnowflakeDBConnection <- function(x) {
+  info <- x@info
+  paste0("Snowflake Database: ", info$version, "\nURL: ", info$url, "\n")
 }
 
 #' @export
@@ -287,7 +305,19 @@ sql_translate_env.SnowflakeDBConnection <- function(x) {
       paste = function(x, collapse)
         dbplyr::build_sql("LISTAGG(", x, collapse, ")")
     ),
-    dbplyr::base_win
+    dbplyr::sql_translator(
+      .parent = dbplyr::base_win,
+      n = function()
+        dbplyr::sql("COUNT(*)"),
+      cor = dbplyr::sql_prefix("CORR"),
+      cov = dbplyr::sql_prefix("COVAR_SAMP"),
+      sd =  dbplyr::sql_prefix("STDDEV_SAMP"),
+      var = dbplyr::sql_prefix("VAR_SAMP"),
+      # all = dbplyr::sql_prefix("bool_and"),
+      # any = dbplyr::sql_prefix("bool_or"),
+      paste = function(x, collapse)
+        dbplyr::build_sql("LISTAGG(", x, collapse, ")")
+    )
   )
 }
 
@@ -353,6 +383,10 @@ db_explain.SnowflakeDBConnection <- function(con, sql, ...) {
 
 # Various helper methods ------------------------------------------------------------------
 
+#' Perform a COPY INTO in Snowflake.
+#' 
+#' @param con A SnowflakeDBConnection object.
+#' @param from 
 #' @export
 db_snowflake_copy <- function(con, from, to, format_opts = list()) {
   if (length(names(format_opts)) > 0) {
@@ -409,8 +443,7 @@ db_load_from_file <- function(con, table.name, file.name) {
     stage_name,
     id(table.name),
     format_opts = list(
-      type = "CSV",
-      field_delimiter = "','",
+      field_delimiter = "'\\t'",
       skip_header = 1,
       null_if = "'NA'"
     )
@@ -471,7 +504,7 @@ copy_to.src_snowflakedb <-
       message("The table ", name, " already exists.")
       if (mode != "overwrite" && mode != "append")
         stop(
-          "Cannot continue because the table already exists in the database.
+          "Could not copy because the table already exists in the database.
           Set parameter 'mode' to either \"overwrite\"or \"append\"."
         )
     }
@@ -480,11 +513,11 @@ copy_to.src_snowflakedb <-
     names(types) <- names(df)
     
     tryCatch({
-      tmpfilename = tempfile(fileext = ".csv")
+      tmpfilename = tempfile(fileext = ".tsv")
       write.table(
         df,
         file = tmpfilename,
-        sep = ",",
+        sep = "\t",
         row.names = FALSE,
         quote = FALSE
       )
