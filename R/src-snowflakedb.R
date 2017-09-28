@@ -284,7 +284,12 @@ tbl.SnowflakeDBConnection <- function(con, from, ...) {
 #' @export
 db_desc.SnowflakeDBConnection <- function(x) {
   info <- x@info
-  paste0("Snowflake Database: ", info$version, "\nURL: ", info$url, "\n")
+  # Commented-out so that regression tests don't have to be updated with every new release. 
+  # Instead we use a version and URL-agnostic printout. 
+  
+  # paste0("Snowflake Database: ", info$version, "\nURL: ", info$url, "\n")
+  
+  "SnowflakeDB Data Source"
 }
 
 #' @export
