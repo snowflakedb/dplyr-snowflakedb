@@ -53,6 +53,9 @@ setClass(
 #'             <account>.snowflakecomputing.com)
 #' @param port Port (Defaults to 443, the default for public endpoints)
 #' @param opts List of other parameters to pass (warehouse, db, schema, tracing)
+#' @param region_id Specifies the ID for the Snowflake Region where your account 
+#' is located. (Default: us-west, example: us-east-1). 
+#' See: \url{https://docs.snowflake.net/manuals/user-guide/intro-editions.html#region-ids-in-account-urls}
 #' @param ... for the src, other arguments passed on to the underlying
 #'   database connector, \code{dbConnect}. For the tbl, included for
 #'   compatibility with the generic, but otherwise ignored.
@@ -150,9 +153,18 @@ src_snowflakedb <- function(user = NULL,
                             port = 443,
                             host = NULL,
                             opts = list(),
+                            region_id = "us-west",
                             ...) {
   requireNamespace("RJDBC", quietly = TRUE)
   requireNamespace("dplyr", quietly = TRUE)
+  
+  valid_regions = c("us-east-1", "eu-central-1", "ap-southeast-2")
+  
+  isWest <- substring(tolower(region_id), 1, 7) == "us-west"
+  
+  if (!isWest && !(tolower(region_id) %in% valid_regions))
+    stop("Invalid 'region_id'. 
+         See: https://docs.snowflake.net/manuals/user-guide/intro-editions.html#region-ids-in-account-urls")
   
   # set client metadata info
   snowflakeClientInfo <- paste0(
@@ -194,10 +206,18 @@ src_snowflakedb <- function(user = NULL,
   else {
     opts <- ""
   }
+  
   message("host: ", host)
+  
   if (is.null(host) || host == "") {
-    host = paste0(account, ".snowflakecomputing.com")
+    if (isWest)
+      regionUrl <- ""
+    else
+      regionUrl <- paste0(".", tolower(region_id))
+    
+    host = paste0(account, regionUrl, ".snowflakecomputing.com")
   }
+  
   url <- paste0("jdbc:snowflake://",
                 host,
                 ":",
