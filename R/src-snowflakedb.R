@@ -556,6 +556,13 @@ copy_to.src_snowflakedb <-
     
     tryCatch({
       tmpfilename = tempfile(fileext = ".tsv")
+
+      #fix windows path issue in JDBC
+      winStr <- "windows"
+      if(grepl(winStr, tolower(.Platform["OS.type"]))) {
+        tmpfilename <- gsub("\\\\","\\\\\\\\\\\\\\\\",tmpfilename)
+      }
+
       write.table(
         df,
         file = tmpfilename,
