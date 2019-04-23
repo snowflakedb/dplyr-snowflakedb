@@ -222,9 +222,7 @@ src_snowflakedb <- function(user = NULL,
                 host,
                 ":",
                 as.character(port),
-                "/?account=",
-                account,
-                opts)
+                "/?",opts)
   message("URL: ", url)
   conn <-
     dbConnect(
