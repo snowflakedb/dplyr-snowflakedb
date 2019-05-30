@@ -158,7 +158,7 @@ src_snowflakedb <- function(user = NULL,
   requireNamespace("RJDBC", quietly = TRUE)
   requireNamespace("dplyr", quietly = TRUE)
   
-  valid_regions = c("us-east-1", "eu-central-1", "ap-southeast-2")
+  valid_regions = c("us-east-1", "eu-central-1", "ap-southeast-2", "west-europe.azure")
   
   isWest <- substring(tolower(region_id), 1, 7) == "us-west"
   
