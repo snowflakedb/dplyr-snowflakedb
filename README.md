@@ -28,7 +28,7 @@ The `dplyr.snowflakedb` connectivity to SnowflakeDB uses the `RJDBC` package, ho
 
 If you are using R on Mac OS X, please see [this wiki page](https://github.com/snowflakedb/dplyr-snowflakedb/wiki/Configuring-R-rJava-RJDBC-on-Mac-OS-X) for the necessary installation steps for `rJava`.
 
-Once you have `rJava` installed and verified it is using Java 8, you can install `dplyr` and dependancies.
+Once you have `rJava` installed and verified it is using Java 8, you can install `dplyr` and dependencies.
 
 ```R
 install.packages(c("RJDBC", "DBI", "dplyr"))
