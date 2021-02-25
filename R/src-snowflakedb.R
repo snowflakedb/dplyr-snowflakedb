@@ -511,8 +511,8 @@ atomic_copy <- function(con, from, to) {
     stop(w)
   },
   finally = {
-   # dbSendQuery(con,
-    #            paste("DROP TABLE IF EXISTS", temp_table_name))
+    dbSendQuery(con,
+                paste("DROP TABLE IF EXISTS", temp_table_name))
   })
 }
 
@@ -572,7 +572,7 @@ copy_to.src_snowflakedb <-
       )
       if (mode == "overwrite" || !has_table) {
         if (!has_table)
-          db_create_table(connection, name, types)
+          db_create_table(connection, name, types, temporary = FALSE)
         
         atomic_copy(connection, tmpfilename, name)
       }

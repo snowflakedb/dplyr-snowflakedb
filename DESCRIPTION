@@ -1,7 +1,7 @@
 Package: dplyr.snowflakedb
 Title: SnowflakeDB backend for dplyr
 Description: Adds SnowflakeDB SQL backend support for dplyr.
-Version: 0.3.0
+Version: 0.3.0-a
 Date: 2017-10-03
 Authors@R: c(
     person("Greg", "Rahn", email = "greg@snowflake.net",
