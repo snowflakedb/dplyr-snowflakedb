@@ -14,6 +14,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
+
+
+## NOTE
+
+This package is no longer being maintained and RStudio has picked up support for Snowflake in their packages. 
+
 # dplyr.snowflakedb
 
 This R package extends [`dplyr`](https://github.com/hadley/dplyr) to add backend support for [SnowflakeDB](https://snowflake.net).  More details on `dplyr` can be found in the [README](https://github.com/hadley/dplyr/blob/master/README.md) page for the project.
