@@ -18,7 +18,7 @@ limitations under the License.
 
 ## NOTE
 
-This package is no longer being maintained and RStudio has picked up support for Snowflake in their packages. 
+This package is no longer being maintained. RStudio has added support for Snowflake in their odbc and dplyr packages. 
 
 # dplyr.snowflakedb
 
