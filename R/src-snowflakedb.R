@@ -186,8 +186,8 @@ src_snowflakedb <- function(user = NULL,
   )
   
   # initalize the JVM and set the snowflake properties
-  .jinit()
-  .jcall(
+  rJava::.jinit()
+  rJava::.jcall(
     "java/lang/System",
     "S",
     "setProperty",

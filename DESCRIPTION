@@ -23,7 +23,8 @@ Imports:
     magrittr,
     lazyeval (>= 0.1.10),
     dbplyr,
-    dplyr (>= 0.5.0)
+    dplyr (>= 0.5.0),
+    rJava
 Suggests:
     Lahman (>= 3.0-1),
     nycflights13,
