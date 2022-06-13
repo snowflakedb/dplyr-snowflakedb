@@ -53,6 +53,9 @@ install.packages("devtools")
 devtools::install_github("snowflakedb/dplyr-snowflakedb")
 ```
 
+## Downloading Snowflake JDBC driver
+Please see [Downloading the Driver](https://docs.snowflake.com/en/user-guide/jdbc-download.html#downloading-the-driver) in Snowflake documentation.
+
 ## Example SnowflakeDB Connection
 
 ```R
@@ -63,10 +66,13 @@ options(dplyr.jdbc.classpath = "/home/snowman/Downloads/snowflake_jdbc.jar")
 my_db <- src_snowflakedb(user = "snowman",
                          password = "letitsnow",
                          account = "acme",
+                         host = "acme.snowflakecomputing.com",
                          opts = list(warehouse = "mywh",
                                      db = "mydb",
                                      schema = "public"))
 ```
+
+Depending on your cloud/region you might need to include that information in the connection string too. Example: `acme.west-europe.azure` and `acme.west-europe.azure.snowflakecomputing.com` for `account` and `host`, respectively.
 
 ##  Issues
 
