@@ -158,13 +158,15 @@ src_snowflakedb <- function(user = NULL,
   requireNamespace("RJDBC", quietly = TRUE)
   requireNamespace("dplyr", quietly = TRUE)
   
-  valid_regions = c("us-east-1", "eu-central-1", "ap-southeast-2")
+  valid_regions = c("us-east-1", "us-west-2", "eu-west-1", "eu-central-1", "ca-central-1", 
+                    "ap-southeast-1", "ap-southeast-2", "east-us-2.azure", "us-gov-virginia.azure", "west-europe.azure",
+                    "australia-east.azure", "canada-central.azure", "southeast-asia.azure")
   
   isWest <- substring(tolower(region_id), 1, 7) == "us-west"
   
   if (!isWest && !(tolower(region_id) %in% valid_regions))
     stop("Invalid 'region_id'. 
-         See: https://docs.snowflake.net/manuals/user-guide/intro-editions.html#region-ids-in-account-urls")
+         See: https://docs.snowflake.net/manuals/user-guide/intro-regions.html")
   
   # set client metadata info
   snowflakeClientInfo <- paste0(
